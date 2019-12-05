@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.util.Log;
 
 import com.example.sberschoolweatherapp.App;
 import com.example.sberschoolweatherapp.data.mapper.CurrentLocationMapper;
@@ -22,6 +23,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -79,12 +82,14 @@ public class LocationServiceRepository implements ILocationServiceRepository {
 
     private static class MainLocationCallback extends LocationCallback {
 
-        private Subject<CurrentPosition> mSubject = PublishSubject.create();
+        private final ExecutorService mExecutorService;
+        private Subject<CurrentPosition> mSubject;
         private Geocoder mGeocoder;
 
         MainLocationCallback(Geocoder geocoder) {
-
             mGeocoder = geocoder;
+            mExecutorService = Executors.newSingleThreadExecutor();
+            mSubject = PublishSubject.create();
         }
 
         @Override
@@ -95,21 +100,22 @@ public class LocationServiceRepository implements ILocationServiceRepository {
             }
 
             for (Location location : locationResult.getLocations()) {
-                List<Address> list = Collections.emptyList();
-                try {
-                    list = mGeocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Address address = null;
-                if (!list.isEmpty()) {
-                    address = list.get(0);
-                }
-
-                mSubject.onNext(new CurrentPosition(
-                        location.getLatitude(),
-                        location.getLongitude(),
-                        address));
+                mExecutorService.submit(() -> {
+                    List<Address> list = Collections.emptyList();
+                    try {
+                        list = mGeocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address address = null;
+                    if (!list.isEmpty()) {
+                        address = list.get(0);
+                    }
+                    mSubject.onNext(new CurrentPosition(
+                            location.getLatitude(),
+                            location.getLongitude(),
+                            address));
+                });
             }
         }
 
