@@ -1,7 +1,5 @@
 package com.example.sberschoolweatherapp.domain.model;
 
-import android.location.Address;
-
 import org.jetbrains.annotations.Nullable;
 
 public class CurrentPositionEntity {
@@ -9,9 +7,9 @@ public class CurrentPositionEntity {
     private double latitude;
     private double longitude;
     @Nullable
-    private final Address mAddress;
+    private final String mAddress;
 
-    public CurrentPositionEntity(double latitude, double longitude, @Nullable Address address) {
+    public CurrentPositionEntity(double latitude, double longitude, @Nullable String address) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.mAddress = address;
@@ -26,7 +24,7 @@ public class CurrentPositionEntity {
     }
 
     @Nullable
-    public Address getAddress() {
+    public String getAddress() {
         return mAddress;
     }
 }

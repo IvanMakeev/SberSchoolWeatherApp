@@ -1,7 +1,5 @@
 package com.example.sberschoolweatherapp.domain.model;
 
-import android.location.Address;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +9,7 @@ public class InfoEntity {
     private final WeatherEntity mWeatherEntity;
 
     @Nullable
-    private Address mAddress;
+    private String mAddress;
 
     public InfoEntity(@NotNull WeatherEntity weatherEntity) {
         mWeatherEntity = weatherEntity;
@@ -23,11 +21,11 @@ public class InfoEntity {
     }
 
     @Nullable
-    public Address getAddress() {
+    public String getAddress() {
         return mAddress;
     }
 
-    public void setAddress(@Nullable Address address) {
+    public void setAddress(@Nullable String address) {
         mAddress = address;
     }
 }

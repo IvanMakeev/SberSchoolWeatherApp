@@ -1,7 +1,5 @@
 package com.example.sberschoolweatherapp.presentation;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -45,8 +43,7 @@ public class WeatherViewModel extends ViewModel {
                                 .map(info -> {
                                     info.setAddress(position.getAddress());
                                     return info;
-                                })
-                                .subscribeOn(Schedulers.io()))
+                                }))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         info -> mAllInfoMutableLiveData.setValue(info),

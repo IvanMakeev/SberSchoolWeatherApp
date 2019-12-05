@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.util.Log;
 
 import com.example.sberschoolweatherapp.App;
 import com.example.sberschoolweatherapp.data.mapper.CurrentLocationMapper;
@@ -114,7 +113,7 @@ public class LocationServiceRepository implements ILocationServiceRepository {
                     mSubject.onNext(new CurrentPosition(
                             location.getLatitude(),
                             location.getLongitude(),
-                            address));
+                            address.getAddressLine(0)));
                 });
             }
         }

@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             maxTemp.setText(String.valueOf(info.getWeatherEntity().getTempMax()));
             windSpeed.setText(String.valueOf(info.getWeatherEntity().getSpeed()));
             if (info.getAddress() != null) {
-                address.setText(info.getAddress().getAddressLine(0));
+                address.setText(info.getAddress());
             }
         });
     }
