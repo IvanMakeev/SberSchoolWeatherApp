@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SberSchoolWeatherApp</string>
+    <string name="weather">Погода:</string>
+    <string name="temp">Текущая температура:</string>
+    <string name="temp_min">Минимальная температура:</string>
+    <string name="max_temp">Максимальная температура:</string>
+    <string name="wind_speed">Скорость ветра:</string>
+</resources>
