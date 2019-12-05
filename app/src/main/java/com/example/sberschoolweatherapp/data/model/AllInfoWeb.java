@@ -13,10 +13,6 @@ public class AllInfoWeb {
     private List<WeatherWeb> weather;
 
     @NotNull
-    @SerializedName("base")
-    private String base;
-
-    @NotNull
     @SerializedName("main")
     private MainWeb main;
 
@@ -26,27 +22,24 @@ public class AllInfoWeb {
 
     public AllInfoWeb(
             @NotNull List<WeatherWeb> weather,
-            @NotNull String base,
             @NotNull MainWeb main,
             @NotNull WindWeb wind) {
         this.weather = weather;
-        this.base = base;
         this.main = main;
         this.wind = wind;
     }
 
+    @NotNull
     public List<WeatherWeb> getWeather() {
         return weather;
     }
 
-    public String getBase() {
-        return base;
-    }
-
+    @NotNull
     public MainWeb getMain() {
         return main;
     }
 
+    @NotNull
     public WindWeb getWind() {
         return wind;
     }

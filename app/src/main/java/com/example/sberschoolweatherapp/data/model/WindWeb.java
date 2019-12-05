@@ -10,21 +10,13 @@ public class WindWeb {
     @SerializedName("speed")
     private Double speed;
 
-    @NotNull
-    @SerializedName("deg")
-    private Double deg;
-
-    public WindWeb(@NotNull Double speed, @NotNull Double deg) {
+    public WindWeb(@NotNull Double speed) {
         this.speed = speed;
-        this.deg = deg;
     }
 
+    @NotNull
     public Double getSpeed() {
         return speed;
-    }
-
-    public Double getDeg() {
-        return deg;
     }
 
 }

@@ -1,13 +1,14 @@
 package com.example.sberschoolweatherapp.data.repository;
 
 import android.annotation.SuppressLint;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
-import android.util.Log;
 
 import com.example.sberschoolweatherapp.App;
 import com.example.sberschoolweatherapp.data.mapper.CurrentLocationMapper;
-import com.example.sberschoolweatherapp.data.model.CurrentLocation;
-import com.example.sberschoolweatherapp.domain.model.CurrentLocationEntity;
+import com.example.sberschoolweatherapp.data.model.CurrentPosition;
+import com.example.sberschoolweatherapp.domain.model.CurrentPositionEntity;
 import com.example.sberschoolweatherapp.domain.repository.ILocationServiceRepository;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -15,19 +16,32 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 public class LocationServiceRepository implements ILocationServiceRepository {
 
+    private final MainLocationCallback mLocationCallback;
+    private final CurrentLocationMapper mMapper;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private MainLocationCallback mLocationCallback = new MainLocationCallback();
     private LocationRequest mLocationRequest;
+
+
+    public LocationServiceRepository() {
+        Geocoder geocoder = new Geocoder(App.INSTANCE, Locale.getDefault());
+        mLocationCallback = new MainLocationCallback(geocoder);
+        mMapper = new CurrentLocationMapper();
+    }
 
     @SuppressLint("MissingPermission")
     @Override
@@ -40,27 +54,24 @@ public class LocationServiceRepository implements ILocationServiceRepository {
     public void removeLocationUpdates() {
         if (mFusedLocationProviderClient != null) {
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-            Log.d("TAG", "removeLocationUpdates() called");
         }
     }
 
+    @NotNull
     @Override
-    public Observable<CurrentLocationEntity> getLocation() {
+    public Observable<CurrentPositionEntity> getLocation() {
         return mLocationCallback
                 .getSubject()
-                .flatMap((Function<CurrentLocation, ObservableSource<CurrentLocation>>) currentLocation ->
+                .flatMap((Function<CurrentPosition, ObservableSource<CurrentPosition>>) currentLocation ->
                         Observable.fromCallable(() -> currentLocation))
-                .map(currentLocation -> {
-                    CurrentLocationMapper mapper = new CurrentLocationMapper();
-                    return mapper.mapToEntity(currentLocation);
-                });
+                .map(mMapper::mapToEntity);
     }
 
     private LocationRequest getLocationRequest() {
         if (mLocationRequest == null) {
             mLocationRequest = LocationRequest.create();
-            mLocationRequest.setInterval(30000L);
-            mLocationRequest.setFastestInterval(15000L);
+            mLocationRequest.setInterval(15000L);
+            mLocationRequest.setFastestInterval(7000L);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         }
         return mLocationRequest;
@@ -68,7 +79,13 @@ public class LocationServiceRepository implements ILocationServiceRepository {
 
     private static class MainLocationCallback extends LocationCallback {
 
-        private Subject<CurrentLocation> mSubject = PublishSubject.create();
+        private Subject<CurrentPosition> mSubject = PublishSubject.create();
+        private Geocoder mGeocoder;
+
+        MainLocationCallback(Geocoder geocoder) {
+
+            mGeocoder = geocoder;
+        }
 
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -78,14 +95,26 @@ public class LocationServiceRepository implements ILocationServiceRepository {
             }
 
             for (Location location : locationResult.getLocations()) {
-                mSubject.onNext(new CurrentLocation(
+                List<Address> list = Collections.emptyList();
+                try {
+                    list = mGeocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Address address = null;
+                if (!list.isEmpty()) {
+                    address = list.get(0);
+                }
+
+                mSubject.onNext(new CurrentPosition(
                         location.getLatitude(),
-                        location.getLongitude()
-                ));
+                        location.getLongitude(),
+                        address));
             }
         }
 
-        public Subject<CurrentLocation> getSubject() {
+        @NotNull
+        Subject<CurrentPosition> getSubject() {
             return mSubject;
         }
     }

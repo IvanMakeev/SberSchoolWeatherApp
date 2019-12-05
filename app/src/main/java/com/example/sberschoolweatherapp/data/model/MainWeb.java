@@ -11,14 +11,6 @@ public class MainWeb {
     private Double temp;
 
     @NotNull
-    @SerializedName("pressure")
-    private Integer pressure;
-
-    @NotNull
-    @SerializedName("humidity")
-    private Integer huIdity;
-
-    @NotNull
     @SerializedName("temp_min")
     private Double tempMin;
 
@@ -27,33 +19,24 @@ public class MainWeb {
     private Double tempMax;
 
     public MainWeb(@NotNull Double temp,
-                   @NotNull Integer pressure,
-                   @NotNull Integer huIdity,
                    @NotNull Double tempMin,
                    @NotNull Double tempMax) {
         this.temp = temp;
-        this.pressure = pressure;
-        this.huIdity = huIdity;
         this.tempMin = tempMin;
         this.tempMax = tempMax;
     }
 
+    @NotNull
     public Double getTemp() {
         return temp;
     }
 
-    public Integer getPressure() {
-        return pressure;
-    }
-
-    public Integer getHuIdity() {
-        return huIdity;
-    }
-
+    @NotNull
     public Double getTempMin() {
         return tempMin;
     }
 
+    @NotNull
     public Double getTempMax() {
         return tempMax;
     }

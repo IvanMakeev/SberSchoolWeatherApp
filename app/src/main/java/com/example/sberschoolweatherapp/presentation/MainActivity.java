@@ -22,14 +22,14 @@ import com.example.sberschoolweatherapp.data.mapper.IMapper;
 import com.example.sberschoolweatherapp.data.mapper.WeatherMapper;
 import com.example.sberschoolweatherapp.data.model.AllInfoWeb;
 import com.example.sberschoolweatherapp.data.repository.LocationServiceRepository;
-import com.example.sberschoolweatherapp.data.repository.WeatherRepository;
+import com.example.sberschoolweatherapp.data.repository.InfoRepository;
 import com.example.sberschoolweatherapp.domain.interactor.ILocationServiceInteractor;
-import com.example.sberschoolweatherapp.domain.interactor.IWeatherInteractor;
+import com.example.sberschoolweatherapp.domain.interactor.IInfoInteractor;
 import com.example.sberschoolweatherapp.domain.interactor.LocationServiceInteractor;
-import com.example.sberschoolweatherapp.domain.interactor.WeatherInteractor;
-import com.example.sberschoolweatherapp.domain.model.WeatherEntity;
+import com.example.sberschoolweatherapp.domain.interactor.InfoInteractor;
+import com.example.sberschoolweatherapp.domain.model.InfoEntity;
 import com.example.sberschoolweatherapp.domain.repository.ILocationServiceRepository;
-import com.example.sberschoolweatherapp.domain.repository.IWeatherRepository;
+import com.example.sberschoolweatherapp.domain.repository.IInfoRepository;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -51,22 +51,17 @@ public class MainActivity extends AppCompatActivity {
     @NotNull
     private WeatherApi mApi = App.getWeatherApi();
     @NotNull
-    private IMapper<WeatherEntity, AllInfoWeb> mMapper = new WeatherMapper();
+    private IMapper<InfoEntity, AllInfoWeb> mMapper = new WeatherMapper();
     @NotNull
-    private IWeatherRepository mWeatherRepository = new WeatherRepository(mApi, mMapper);
+    private IInfoRepository mWeatherRepository = new InfoRepository(mApi, mMapper);
     @NotNull
-    private IWeatherInteractor mWeatherInteractor = new WeatherInteractor(mWeatherRepository);
+    private IInfoInteractor mWeatherInteractor = new InfoInteractor(mWeatherRepository);
     @NotNull
     private ILocationServiceRepository mLocationServiceRepository = new LocationServiceRepository();
     @NotNull
     private ILocationServiceInteractor mLocationServiceInteractor = new LocationServiceInteractor(mLocationServiceRepository);
 
     private WeatherViewModel mWeatherViewModel;
-
-
-//    private FusedLocationProviderClient mFusedLocationProviderClient;
-
-//    private LocationCallback mLocationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +70,6 @@ public class MainActivity extends AppCompatActivity {
         WeatherViewModelFactory factory = new WeatherViewModelFactory(mWeatherInteractor, mLocationServiceInteractor);
         mWeatherViewModel = ViewModelProviders.of(this, factory).get(WeatherViewModel.class);
         initView();
-
-        mWeatherViewModel.showWeather();
-//        mLocationCallback = new MainLocationCallback(weatherViewModel);
     }
 
     @Override
@@ -139,13 +131,17 @@ public class MainActivity extends AppCompatActivity {
         TextView minTemp = findViewById(R.id.min_temp);
         TextView maxTemp = findViewById(R.id.max_temp);
         TextView windSpeed = findViewById(R.id.wind_speed);
+        TextView address = findViewById(R.id.address);
 
-        mWeatherViewModel.getLiveData().observe(this, weather -> {
-            currentWeather.setText(weather.getDescription());
-            temp.setText(String.valueOf(weather.getTemp()));
-            minTemp.setText(String.valueOf(weather.getTempMin()));
-            maxTemp.setText(String.valueOf(weather.getTempMax()));
-            windSpeed.setText(String.valueOf(weather.getSpeed()));
+        mWeatherViewModel.getLiveData().observe(this, info -> {
+            currentWeather.setText(info.getWeatherEntity().getDescription());
+            temp.setText(String.valueOf(info.getWeatherEntity().getTemp()));
+            minTemp.setText(String.valueOf(info.getWeatherEntity().getTempMin()));
+            maxTemp.setText(String.valueOf(info.getWeatherEntity().getTempMax()));
+            windSpeed.setText(String.valueOf(info.getWeatherEntity().getSpeed()));
+            if (info.getAddress() != null) {
+                address.setText(info.getAddress().getAddressLine(0));
+            }
         });
     }
 
@@ -187,9 +183,8 @@ public class MainActivity extends AppCompatActivity {
         SettingsClient client = LocationServices.getSettingsClient(this);
         Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
-        task.addOnSuccessListener(this, locationSettingsResponse -> {
-            mLocationServiceInteractor.startLocationService();
-        });
+        task.addOnSuccessListener(this, locationSettingsResponse ->
+                mLocationServiceInteractor.startLocationService());
 
         task.addOnFailureListener(this, e -> {
             if (e instanceof ResolvableApiException) {
@@ -206,44 +201,10 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationRequest getLocationRequest() {
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(30000L);
-        locationRequest.setFastestInterval(15000L);
+        locationRequest.setInterval(15000L);
+        locationRequest.setFastestInterval(7000L);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         return locationRequest;
     }
-
-    //    @SuppressLint("MissingPermission")
-//    private void startLocationService() {
-//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-//
-//        mFusedLocationProviderClient.requestLocationUpdates(getLocationRequest(), mLocationCallback, null);
-//    }
-
-//    private static class MainLocationCallback extends LocationCallback {
-//
-//        private final WeatherViewModel mWeatherViewModel;
-//
-//        private MainLocationCallback(WeatherViewModel weatherViewModel) {
-//            mWeatherViewModel = weatherViewModel;
-//        }
-//
-//        @Override
-//        public void onLocationResult(LocationResult locationResult) {
-//            Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
-//
-//            if (locationResult == null) {
-//                return;
-//            }
-//
-//            for (Location location : locationResult.getLocations()) {
-//                Log.i(TAG, "Location from LocationResuls = " + location);
-//                location.getLatitude();
-//                location.getLongitude();
-//
-//                mWeatherViewModel.showWeather(location.getLatitude(), location.getLongitude());
-//            }
-//        }
-//    }
-
 }

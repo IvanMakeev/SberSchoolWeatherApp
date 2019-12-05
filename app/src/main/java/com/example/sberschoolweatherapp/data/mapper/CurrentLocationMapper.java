@@ -1,14 +1,14 @@
 package com.example.sberschoolweatherapp.data.mapper;
 
-import com.example.sberschoolweatherapp.data.model.CurrentLocation;
-import com.example.sberschoolweatherapp.domain.model.CurrentLocationEntity;
+import com.example.sberschoolweatherapp.data.model.CurrentPosition;
+import com.example.sberschoolweatherapp.domain.model.CurrentPositionEntity;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CurrentLocationMapper implements IMapper<CurrentLocationEntity, CurrentLocation> {
+public class CurrentLocationMapper implements IMapper<CurrentPositionEntity, CurrentPosition> {
     @NotNull
     @Override
-    public CurrentLocationEntity mapToEntity(@NotNull CurrentLocation type) {
-        return new CurrentLocationEntity(type.getLatitude(), type.getLongitude());
+    public CurrentPositionEntity mapToEntity(@NotNull CurrentPosition type) {
+        return new CurrentPositionEntity(type.getLatitude(), type.getLongitude(), type.getAddress());
     }
 }

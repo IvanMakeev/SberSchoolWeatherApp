@@ -1,10 +1,11 @@
 package com.example.sberschoolweatherapp.domain.interactor;
 
-import com.example.sberschoolweatherapp.domain.model.CurrentLocationEntity;
+import com.example.sberschoolweatherapp.domain.model.CurrentPositionEntity;
 import com.example.sberschoolweatherapp.domain.repository.ILocationServiceRepository;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observable;
-import io.reactivex.Single;
 
 public class LocationServiceInteractor implements ILocationServiceInteractor {
 
@@ -24,8 +25,9 @@ public class LocationServiceInteractor implements ILocationServiceInteractor {
         mRepository.removeLocationUpdates();
     }
 
+    @NotNull
     @Override
-    public Observable<CurrentLocationEntity> getLocation() {
-        return mRepository.getLocation();
+    public Observable<CurrentPositionEntity> getPosition() {
+        return mRepository.getLocation() ;
     }
 }

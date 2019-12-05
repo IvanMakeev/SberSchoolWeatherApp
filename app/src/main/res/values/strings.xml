@@ -5,4 +5,5 @@
     <string name="temp_min">Минимальная температура:</string>
     <string name="max_temp">Максимальная температура:</string>
     <string name="wind_speed">Скорость ветра:</string>
+    <string name="address">Адрес:</string>
 </resources>

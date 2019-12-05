@@ -4,7 +4,6 @@ package com.example.sberschoolweatherapp.data.api;
 import com.example.sberschoolweatherapp.data.model.AllInfoWeb;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sberschoolweatherapp.domain.interactor.ILocationServiceInteractor;
-import com.example.sberschoolweatherapp.domain.interactor.IWeatherInteractor;
+import com.example.sberschoolweatherapp.domain.interactor.IInfoInteractor;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,10 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class WeatherViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     @NotNull
-    private final IWeatherInteractor mWeatherInteractor;
-    private ILocationServiceInteractor mLocationServiceInteractor;
+    private final IInfoInteractor mWeatherInteractor;
+    private final ILocationServiceInteractor mLocationServiceInteractor;
 
-    public WeatherViewModelFactory(@NotNull IWeatherInteractor weatherInteractor, ILocationServiceInteractor locationServiceInteractor) {
+    public WeatherViewModelFactory(@NotNull IInfoInteractor weatherInteractor,
+                                   @NotNull ILocationServiceInteractor locationServiceInteractor) {
         mWeatherInteractor = weatherInteractor;
         mLocationServiceInteractor = locationServiceInteractor;
     }

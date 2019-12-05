@@ -3,21 +3,20 @@ package com.example.sberschoolweatherapp.domain.model;
 import org.jetbrains.annotations.NotNull;
 
 public class WeatherEntity {
+    @NotNull
+    private final String description;
 
     @NotNull
-    private String description;
+    private final Double temp;
 
     @NotNull
-    private Double temp;
+    private final Double tempMin;
 
     @NotNull
-    private Double tempMin;
+    private final Double tempMax;
 
     @NotNull
-    private Double tempMax;
-
-    @NotNull
-    private Double speed;
+    private final Double speed;
 
     public WeatherEntity(@NotNull String description,
                          @NotNull Double temp,
@@ -31,6 +30,7 @@ public class WeatherEntity {
         this.speed = speed;
     }
 
+    @NotNull
     public String getDescription() {
         return description;
     }

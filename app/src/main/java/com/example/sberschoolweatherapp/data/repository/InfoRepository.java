@@ -3,29 +3,29 @@ package com.example.sberschoolweatherapp.data.repository;
 import com.example.sberschoolweatherapp.data.api.WeatherApi;
 import com.example.sberschoolweatherapp.data.mapper.IMapper;
 import com.example.sberschoolweatherapp.data.model.AllInfoWeb;
-import com.example.sberschoolweatherapp.domain.model.WeatherEntity;
-import com.example.sberschoolweatherapp.domain.repository.IWeatherRepository;
+import com.example.sberschoolweatherapp.domain.model.InfoEntity;
+import com.example.sberschoolweatherapp.domain.repository.IInfoRepository;
 
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 
-public class WeatherRepository implements IWeatherRepository {
+public class InfoRepository implements IInfoRepository {
 
     private static final String METRIC = "metric";
+    @NotNull
     private final WeatherApi mApi;
-    private final IMapper<WeatherEntity, AllInfoWeb> mMapper;
+    @NotNull
+    private final IMapper<InfoEntity, AllInfoWeb> mMapper;
 
-    public WeatherRepository(WeatherApi api, IMapper<WeatherEntity, AllInfoWeb> mapper) {
+    public InfoRepository(@NotNull WeatherApi api, @NotNull IMapper<InfoEntity, AllInfoWeb> mapper) {
         mApi = api;
         mMapper = mapper;
     }
 
     @NotNull
     @Override
-    public Observable<WeatherEntity> getWeather(@NotNull String lat, @NotNull String lon) {
+    public Observable<InfoEntity> getInfo(@NotNull String lat, @NotNull String lon) {
         return mApi.getWeather(lat, lon, METRIC)
                 .map(mMapper::mapToEntity);
     }

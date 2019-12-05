@@ -1,6 +1,8 @@
 package com.example.sberschoolweatherapp.domain.repository;
 
-import com.example.sberschoolweatherapp.domain.model.CurrentLocationEntity;
+import com.example.sberschoolweatherapp.domain.model.CurrentPositionEntity;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
 
@@ -10,6 +12,7 @@ public interface ILocationServiceRepository {
 
     void removeLocationUpdates();
 
-    Observable<CurrentLocationEntity> getLocation();
+    @NotNull
+    Observable<CurrentPositionEntity> getLocation();
 
 }
